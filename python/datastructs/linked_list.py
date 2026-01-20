@@ -14,8 +14,12 @@ class LinkedList(Generic[T]):
     def __init__(self,newNode:Node[T]| None = None) -> None:
         self.head:Node[T]|None = newNode;  
         self.tail:Node[T]|None = newNode;
+        self.length :int = 0;
+        if newNode :
+            self.length += 1;
 
     def append(self,data:T) ->None:
+        self.length+=1;
         #create a new node of that data;
         new_node :Node[T]=Node(data);
         #if the head is empty then set the head to new node
@@ -27,17 +31,20 @@ class LinkedList(Generic[T]):
         if self.tail :
             self.tail.next = new_node;
             self.tail = self.tail.next;
+            return;
 
 
     def prepend(self,data:T)->None:
         new_node:Node[T] = Node(data);
         new_node.next = self.head;
         self.head = new_node;
+        self.length +=1;
 
     def shift(self) ->None:
         if self.head is None:
             return;
         self.head = self.head.next;
+        self.length -=1;
 
     def pop(self) ->None:
         if self.head is None or self.tail is None:
@@ -47,6 +54,7 @@ class LinkedList(Generic[T]):
             self.head=None;
             self.tail=None;
 
+        self.length -=1;
 
         current:Node[T] | None = self.head;
         while current is not None and  current.next != self.tail:
@@ -56,6 +64,43 @@ class LinkedList(Generic[T]):
         if current is not None:
             current.next = None;
             self.tail = current
+
+
+    def insert_at(self,data:T,index:int) -> None:
+        if index == 0 :
+            self.prepend(data);
+            return;
+
+        # if no head then just append at start;
+        if self.head is None:
+            self.append(data);
+            return;
+
+
+        #if add at the end then just do append;
+        if index == self.length  :
+            self.append(data);
+            return;
+
+
+        counter = 0;
+        current:Node[T]= self.head;
+        while current.next is not None and counter < index  - 1 :
+            current = current.next;
+            counter+= 1;
+
+        new_node:Node[T] | None= Node(data);
+
+        #Get the right side of the linked list
+        right_side:Node[T] | None = current.next ;
+
+        #set the right side of linked list to the new node next;
+        new_node.next = right_side;
+
+        #then set the current.next to the new node;
+        current.next = new_node;
+        self.length += 1;
+
 
 
 
@@ -77,14 +122,15 @@ class LinkedList(Generic[T]):
             
         return string_to_return + str(current.val);
 
-newList :LinkedList[int] =LinkedList();
+
+
+newList : LinkedList[int] =LinkedList();
 newList.append(99)
-newList.append(88888)
-newList.prepend(909090909);
-print(str(newList))
+newList.append(8888)
+newList.append(78)
 
-newList.pop();
-print(str(newList))
+newList.insert_at(33,2)
 
-newList.shift()
-print(str(newList))
+
+print(str(newList));
+
