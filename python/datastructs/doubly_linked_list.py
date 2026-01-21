@@ -46,7 +46,12 @@ class doubly_linked_list(Generic[T]):
 
     def pop(self)-> T | None :
         if self.head is None:
-            return self.head;
+            return None;
+        if self.head.next is None:
+            val = self.head.val;
+            self.head = None;
+            return val;
+
 
 
         current: Node[T]|None= self.head;
@@ -60,16 +65,45 @@ class doubly_linked_list(Generic[T]):
         current.prev = None;
         current.next = None;
 
-        if previous_node is None:
-
-            #if there is only one element current head is now none.
-
-            self.head = None;
-        else:
         # clear the previous node pointer to current node;
+        if previous_node:
             previous_node.next = None;
 
         return current.val;
+    def insert_at(self,index_to_insert:int,val:T)->None:
+        if index_to_insert  <= 0 or self.head is None:
+            self.prepend(val);
+            return;
+
+        current = self.head;
+        current_index = 0;
+        while current.next is not None and current_index < index_to_insert - 1 :
+            current = current.next;
+            current_index+=1;
+
+        #if at the end just append;
+        if current.next is None:
+            self.append(val);
+            return;
+
+        new_node = Node(val);
+
+
+        # Make the next node's previous point ot the new node
+        next_node = current.next;
+        next_node.prev = new_node;
+
+        #Make the new node next point to the next node
+        #Make the next Node prev point ot the current node;
+
+        new_node.prev= current;
+        new_node.next = next_node;
+
+        #The current node.next should now point to the new node;
+        current.next = new_node
+        
+
+
 
 
 
@@ -86,7 +120,7 @@ class doubly_linked_list(Generic[T]):
 newList:doubly_linked_list[int] = doubly_linked_list(Node(5));
 newList.append(90);
 newList.append(30);
-_ = newList.pop();
+newList.insert_at(2,222222);
 print(str(newList));
 
 
