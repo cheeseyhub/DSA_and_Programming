@@ -78,7 +78,7 @@ class LinkedList(Generic[T]):
 
 
         #if add at the end then just do append;
-        if index == self.length  :
+        if index == self.length   -1 :
             self.append(data);
             return;
 
@@ -100,6 +100,26 @@ class LinkedList(Generic[T]):
         #then set the current.next to the new node;
         current.next = new_node;
         self.length += 1;
+
+
+    def remove_at(self,index:int):
+        
+        if index == self.length -1 :
+            self.pop();
+            return;
+        if index == 0  or self.head is None:
+            self.shift();
+            return;
+
+
+        counter =0;
+        current:Node[T] | None= self.head;
+        while  current.next is not None and counter <index - 1:
+            current = current.next;
+            counter +=1;
+
+        current.next = current.next.next;
+        self.length -=1;
 
 
 
