@@ -1,3 +1,4 @@
+from nt import error
 from typing import Generic,override
 from typing import TypeVar
 T= TypeVar("T");
@@ -44,6 +45,26 @@ class doubly_linked_list(Generic[T]):
 
         return;
 
+    def shift(self) ->None:
+        if self.head is None:
+            return;
+
+        # if only one node just set head to None;
+        if self.head.next is None:
+            self.head = None;
+            return;
+
+        #Make pointer to start
+        start = self.head;
+
+        #Move the head forward and remove pointer to prev;
+        self.head = self.head.next;
+        self.head.prev = None;
+
+        #remove pointers of the start
+        start.next = None;
+        start.prev = None;
+
     def pop(self)-> T | None :
         if self.head is None:
             return None;
@@ -70,6 +91,7 @@ class doubly_linked_list(Generic[T]):
             previous_node.next = None;
 
         return current.val;
+
     def insert_at(self,index_to_insert:int,val:T)->None:
         if index_to_insert  <= 0 or self.head is None:
             self.prepend(val);
@@ -77,9 +99,13 @@ class doubly_linked_list(Generic[T]):
 
         current = self.head;
         current_index = 0;
-        while current.next is not None and current_index < index_to_insert - 1 :
+        while current.next is not None and current_index < index_to_insert  :
             current = current.next;
             current_index+=1;
+
+        # if index that is too large is given then throw error;
+        if current_index < index_to_insert:
+            raise error("Invalid index;")
 
         #if at the end just append;
         if current.next is None:
@@ -89,22 +115,46 @@ class doubly_linked_list(Generic[T]):
         new_node = Node(val);
 
 
-        # Make the next node's previous point ot the new node
         next_node = current.next;
         next_node.prev = new_node;
 
-        #Make the new node next point to the next node
-        #Make the next Node prev point ot the current node;
 
         new_node.prev= current;
         new_node.next = next_node;
 
-        #The current node.next should now point to the new node;
         current.next = new_node
         
 
 
 
+    def remove_at(self,index_to_remove:int) ->None:
+
+        if self.head is None or index_to_remove == 0:
+            self.shift();
+            return;
+
+        current_index:int = 0;
+        current = self.head;
+        while current.next is not None and current_index < index_to_remove :
+            current = current.next;
+            current_index+=1;
+
+        # if index that is too large is given then throw error;
+        if current_index < index_to_remove:
+            raise error("Invalid index;")
+
+        if current.next is None:
+            _ =self.pop();
+            return;
+        previous_node = current.prev;
+        next_node = current.next;
+
+        current.next = None;
+        current.prev = None;
+
+        assert previous_node is not None;
+        previous_node.next = next_node;
+        next_node.prev = previous_node;
 
 
     @override
@@ -118,9 +168,9 @@ class doubly_linked_list(Generic[T]):
 
 
 newList:doubly_linked_list[int] = doubly_linked_list(Node(5));
-newList.append(90);
-newList.append(30);
-newList.insert_at(2,222222);
+newList.append(900);
+newList.append(500);
+newList.remove_at(0);
 print(str(newList));
 
 
