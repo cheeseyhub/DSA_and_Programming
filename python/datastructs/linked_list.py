@@ -118,6 +118,7 @@ class LinkedList(Generic[T]):
             current = current.next;
             counter +=1;
 
+        assert current.next is not None;
         current.next = current.next.next;
         self.length -=1;
 
