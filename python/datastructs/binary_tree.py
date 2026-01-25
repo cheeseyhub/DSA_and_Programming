@@ -1,3 +1,4 @@
+from __future__ import annotations;
 from typing import TypeVar,Generic;
 T = TypeVar("T");
 
@@ -11,6 +12,35 @@ class TreeNode(Generic[T]):
         self.val:T = data;
         self.left:TreeNode[T] | None = None;
         self.right:TreeNode[T] | None = None;
+
+    def max_depth(self,root: TreeNode[T] | None) ->int:
+        if root is None:
+            return 0;
+
+        left_depth = self.max_depth(root.left);
+        right_depth= self.max_depth(root.right);
+
+        return 1 + max(left_depth,right_depth);
+
+    def total_nodes(self,root:TreeNode[T]|None) -> int :
+        if root is None:
+            return 0;
+
+        return 1 + self.total_nodes(root.left) + self.total_nodes(root.right);
+
+
+        return list_of_nodes;
+
+    def median(self,root:TreeNode[T]|None) -> list[int] | int :
+        # I want to get all the nodes in a list then find the middle value 
+        # if the length of the list is odd then i just do n - 1  /2 
+        # if it is even then it is the average of two middle elements (n /2) -1 + (n /2)
+
+        return 0;
+
+
+        
+        
 
 
 
@@ -34,22 +64,20 @@ def print_tree(node:TreeNode[T] |None) ->None:
     if node is None :
         return;
     print(node.val);
-    if node.left is None: 
-        return;
-    print_tree(node.left)
-    if node.right is None:
-        return;
-    print_tree(node.right);
+    if node.left : 
+        print_tree(node.left)
+    if node.right :
+        print_tree(node.right);
 
 
-tree :TreeNode[int]=  TreeNode(5);
+tree :TreeNode[int]=  TreeNode(100);
+tree.left = TreeNode(99) ;
+tree.right = TreeNode(101) ;
 
 
+print(tree.max_depth(tree));
+print(tree.total_nodes(tree));
 
-tree.left = TreeNode(10) ;
-tree.right = TreeNode(15) ;
 
-
-print_tree(tree);
 
 
