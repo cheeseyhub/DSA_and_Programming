@@ -1,17 +1,26 @@
 from __future__ import annotations;
-from typing import Any, TypeVar,Generic, override;
-T = TypeVar("T");
+from typing import   TypeVar,Generic, override;
+T = TypeVar("T",int ,float);
 
 
 
 class list_acumalator(Generic[T]):
-     def __init__(self):
-         self.list:list[T]= [];
-     def add_to_list(self,node:TreeNode[T])->None:
-         self.list.append(node.val);
-     @override
-     def __str__(self) -> str:
-        return str(self.list);
+    def __init__(self):
+        self.l:list[T]= [];
+        self.size:int = 0;
+
+    def add_to_list(self,node:TreeNode[T])->None:
+        self.l.append(node.val);
+        self.size+=1;
+
+    def get_value(self,index:int) ->T:
+        return self.l[index];
+    
+            
+        
+    @override
+    def __str__(self) -> str:
+        return str(self.l);
 
 
 class TreeNode(Generic[T]):
@@ -35,25 +44,29 @@ class TreeNode(Generic[T]):
 
         return 1 + self.total_nodes(root.left) + self.total_nodes(root.right);
 
-
-
-    def median(self,root:TreeNode[T]|None,accu:list_acumalator[T]) ->  int |None:
-        # I want to get all the nodes in a list then find the middle value 
-        # if the length of the list is odd then i just do n - 1  /2 
-        # if it is even then it is the average of two middle elements (n /2) -1 + (n /2)
-        #
+    def traverse(self,root:TreeNode[T]|None,accu:list_acumalator[T]) ->None:
         if root is None:
             return;
 
         if root.left:
-            _ = self.median(root.left,accu);
+             self.traverse(root.left,accu);
 
         accu.add_to_list(root)
         if root.right:
-            _=  self.median(root.right,accu);
+              self.traverse(root.right,accu);
+
+
+    def median(self,root:TreeNode[T]) ->  float :
+        accu:list_acumalator[T] = list_acumalator() 
+        self.traverse(root,accu);
+        if accu.size % 2 != 0:
+            return accu.get_value(accu.size // 2);
+        else:
+            return  (accu.get_value(accu.size // 2) + accu.get_value(( accu.size // 2 )  -1 )) / 2;
+
+
 
         
-        return 0;
 
 
         
@@ -71,16 +84,18 @@ def print_tree(node:TreeNode[T] |None) ->None:
         print_tree(node.right);
 
 
-nodes_list:list_acumalator[int] = list_acumalator() 
 
 
 tree :TreeNode[int]=  TreeNode(100);
 tree.left = TreeNode(99) ;
+tree.left.left = TreeNode(1) ;
 tree.right = TreeNode(101) ;
+tree.right.right =TreeNode(9999)
 
 
-_ =tree.median(tree,nodes_list);
-print(str(nodes_list));
+
+#print(tree.median(tree))
+print_tree(tree)
 
 
 
