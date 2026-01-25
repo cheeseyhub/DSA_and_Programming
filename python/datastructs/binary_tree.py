@@ -1,10 +1,17 @@
 from __future__ import annotations;
-from typing import TypeVar,Generic;
+from typing import Any, TypeVar,Generic, override;
 T = TypeVar("T");
 
 
 
-
+class list_acumalator(Generic[T]):
+     def __init__(self):
+         self.list:list[T]= [];
+     def add_to_list(self,node:TreeNode[T])->None:
+         self.list.append(node.val);
+     @override
+     def __str__(self) -> str:
+        return str(self.list);
 
 
 class TreeNode(Generic[T]):
@@ -29,35 +36,29 @@ class TreeNode(Generic[T]):
         return 1 + self.total_nodes(root.left) + self.total_nodes(root.right);
 
 
-        return list_of_nodes;
 
-    def median(self,root:TreeNode[T]|None) -> list[int] | int :
+    def median(self,root:TreeNode[T]|None,accu:list_acumalator[T]) ->  int |None:
         # I want to get all the nodes in a list then find the middle value 
         # if the length of the list is odd then i just do n - 1  /2 
         # if it is even then it is the average of two middle elements (n /2) -1 + (n /2)
+        #
+        if root is None:
+            return;
 
+        if root.left:
+            _ = self.median(root.left,accu);
+
+        accu.add_to_list(root)
+        if root.right:
+            _=  self.median(root.right,accu);
+
+        
         return 0;
 
 
         
         
 
-
-
-def visualize_tree(node: TreeNode[T] | None, level: int = 0, prefix: str = "Root: ") -> None:
-    if node is not None:
-        print(" " * (level * 4) + prefix + str(node.val))
-        
-        if node.left is not None or node.right is not None:
-            if node.left:
-                visualize_tree(node.left, level + 1, "L── ")
-            else:
-                print(" " * ((level + 1) * 4) + "L── None")
-                
-            if node.right:
-                visualize_tree(node.right, level + 1, "R── ")
-            else:
-                print(" " * ((level + 1) * 4) + "R── None")
 
 
 def print_tree(node:TreeNode[T] |None) ->None:
@@ -70,13 +71,17 @@ def print_tree(node:TreeNode[T] |None) ->None:
         print_tree(node.right);
 
 
+nodes_list:list_acumalator[int] = list_acumalator() 
+
+
 tree :TreeNode[int]=  TreeNode(100);
 tree.left = TreeNode(99) ;
 tree.right = TreeNode(101) ;
 
 
-print(tree.max_depth(tree));
-print(tree.total_nodes(tree));
+_ =tree.median(tree,nodes_list);
+print(str(nodes_list));
+
 
 
 
