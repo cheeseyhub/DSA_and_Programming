@@ -1,11 +1,10 @@
 from __future__ import annotations;
 from typing import   TypeVar,Generic;
 T = TypeVar("T",int ,float);
+import 
 
 
 
-            
-        
 
 
 class BST(Generic[T]):
@@ -52,7 +51,7 @@ class BST(Generic[T]):
 
     def insert(self,root:BST[T] | None,data:T) ->BST[T] | None:
         if root is None:
-           return  BST(data);
+           return root =  BST(data);
             
             
 
@@ -63,6 +62,8 @@ class BST(Generic[T]):
             root.right = self.insert(root.right,data);
 
         return root;
+
+
 
 
         
@@ -86,8 +87,7 @@ def print_tree(node:BST[T] |None) ->None:
 
 
 tree:BST[int] = BST(32);
-_ = tree.insert(tree,100);
-_ = tree.insert(tree,200);
+_ =tree.insert(tree,90);
 
 
 print_tree(tree);
