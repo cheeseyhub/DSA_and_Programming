@@ -12,7 +12,7 @@ public class Insertion {
         list.add(null);
         for(int i = list.size() - 1 ; i > pos; i--)
         {
-            list.set(i ,list.get(i -1 ));
+            list.set(i ,list.get(i - 1 ));
         }
         list.set(pos,x);
 
