@@ -25,15 +25,6 @@ public class MergeSort {
         int[] secondHalf = new int[inputArray.length - middle];
 
 
-        // for(int i = 0; i< middle; i++)
-        // {
-        //     firstHalf[i] = inputArray[i];
-        // }
-        // for(int i = middle; i < inputArray.length;i++)
-        // {
-        //     secondHalf[i - middle]  =  inputArray[i];
-
-        // }
 
         System.arraycopy(inputArray,0,firstHalf,0, middle);
         System.arraycopy(inputArray,middle,secondHalf,0, inputArray.length - middle);
