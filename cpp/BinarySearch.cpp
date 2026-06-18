@@ -25,6 +25,27 @@ public:
         }
         return -1;
     }
+    int binaryRecursiveSearch(int array[], int left, int right, int target)
+    {
+        if (left > right)
+        {
+            return -1;
+        }
+        int mid = left + (right - left) / 2;
+        if (array[mid] == target)
+        {
+            return mid;
+        }
+
+        if (array[mid] < target)
+        {
+            return binaryRecursiveSearch(array, mid + 1, right, target);
+        }
+        else if (array[mid] > target)
+        {
+            return binaryRecursiveSearch(array, left, mid - 1, target);
+        }
+    }
 };
 int main()
 {
@@ -33,7 +54,7 @@ int main()
     int target = 3;
 
     BinarySearch bs;
-    int result = bs.binarySearch(array, size, target);
+    int result = bs.binaryRecursiveSearch(array, 0, size - 1, target);
 
     if (result == -1)
     {
