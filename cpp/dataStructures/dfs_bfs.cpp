@@ -46,6 +46,27 @@ class Tree {
 			if(node->right !=nullptr) queue.push(node->right);
 		  }
   }
+  int minDepth() {
+
+	  if(root == nullptr) return 0;
+	  std::queue<Node*> queue;
+	  queue.push(root);
+	  int depth = 1;
+	  while(!queue.empty()) {
+		  int levelSize = queue.size();
+		  for(int i = 0 ;  i< levelSize; i++){
+			  Node* current = queue.front();
+			  queue.pop();
+			  if( current->left == nullptr && current->right == nullptr) return depth;
+			  if(current->left != nullptr) queue.push(current->left);
+			  if(current->right != nullptr) queue.push(current->right);
+		  }
+		  depth++;
+	  }
+	  return depth;
+
+
+  }
   private:
   Node* insert(Node* node , int value){
 
@@ -97,10 +118,11 @@ int main() {
     tree.dfs();
     std::cout << std::endl;
 
-    // Perform breadth-first search
-    // std::cout << "BFS traversal:" << std::endl;
-    // tree.bfs();
-    // std::cout << std::endl;
+    //Perform breadth-first search
+    std::cout << "BFS traversal:" << std::endl;
+    tree.bfs();
+    std::cout << std::endl;
+    std::cout << tree.minDepth() << std::endl;
 
     return 0;
 }
