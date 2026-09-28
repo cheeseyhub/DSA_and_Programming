@@ -25,11 +25,27 @@ void print_vector(const std::vector<double> &v)
     }
     std::cout << std::endl;
 }
+
+double loss_function(double weight, double input, double actual)
+{
+    double prediction = weight * input;
+    double error = prediction - actual;
+    return error * error;
+}
+double derivative_of_loss_function(double weight, double input, double actual, double h = 1e-3)
+{
+    double little_ahead = loss_function(weight + h, input, actual);
+    double little_before = loss_function(weight - h, input, actual);
+    double derivative = (little_ahead - little_before) / (2 * h);
+
+    return derivative;
+}
+
 int main()
 {
 
-    const double learning_rate = 0.00005;
-    const int epochs = 50000;
+    const double learning_rate = 0.001;
+    const int epochs = 5000;
     std::vector<int> inputs = {1, 2, 3, 4};
     std::vector<double> acutal_outputs;
 
@@ -54,12 +70,12 @@ int main()
         std::vector<double> error;
         for (int i = 0; i < predict_outputs.size(); i++)
         {
-            error.push_back(predict_outputs[i] - acutal_outputs[i]);
+            error.push_back(loss_function(random_weight, inputs[i], acutal_outputs[i]));
         }
         std::vector<double> dw;
         for (int i = 0; i < error.size(); i++)
         {
-            dw.push_back(2 * error[i] * inputs[i]);
+            dw.push_back(derivative_of_loss_function(random_weight, inputs[i], acutal_outputs[i]));
         }
         double average_dw = std::accumulate(dw.begin(), dw.end(), 0.0) / dw.size();
 
