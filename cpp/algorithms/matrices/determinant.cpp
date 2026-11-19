@@ -39,7 +39,7 @@ public:
 
         // Go through the first row
 
-        for (int i = 0; i < this->cols; i++)
+        for (int col = 0; col < this->cols; col++)
         {
             std::vector<std::vector<double>> minorVector;
             for (int k = 1; k < this->rows; k++)
@@ -47,7 +47,7 @@ public:
                 std::vector<double> minorRow;
                 for (int l = 0; l < this->cols; l++)
                 {
-                    if (l == i)
+                    if (l == col)
                         continue;
 
                     minorRow.push_back(matrix[k][l]);
@@ -56,8 +56,8 @@ public:
             }
 
             Matrix minor(minorVector);
-            double sign = std::pow(-1, i);
-            result += sign * minor.determinant() * this->matrix[0][i];
+            double sign = std::pow(-1, col);
+            result += sign * minor.determinant() * this->matrix[0][col];
         }
 
         return result;

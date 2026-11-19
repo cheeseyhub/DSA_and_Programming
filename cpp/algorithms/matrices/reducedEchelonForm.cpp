@@ -20,8 +20,8 @@ public:
             this->matrix.push_back(inputMatrix[i]);
         }
 
-        rows = inputMatrix[0].size();
-        cols = inputMatrix.size();
+        cols = inputMatrix[0].size();
+        rows = inputMatrix.size();
     };
 
     double determinant()
@@ -40,46 +40,29 @@ public:
 
         // Go through the first row
 
-        for (int i = 0; i < this->rows; i++)
+        for (int col = 0; col < this->cols; col++)
         {
-            // Get the cofactor adding one to get the acutally mathematical numbering ;
-
-            double cofactor = std::pow(-1, i);
-            double minorResult = 0;
-
-            int j;
-
-            for (j = 0; j < this->cols; j++)
+            std::vector<std::vector<double>> minorVector;
+            for (int k = 1; k < this->rows; k++)
             {
-                std::vector<std::vector<double>> minorVector;
-
-                // Inner loop for minor row and column;
-                for (int k = 0; k < this->matrix[i].size(); k++)
+                std::vector<double> minorRow;
+                for (int l = 0; l < this->cols; l++)
                 {
-                    // skip the same row ;
-                    if (k == i)
+                    if (l == col)
                         continue;
-                    std::vector<double> minorRow;
-                    for (int l = 0; l < this->matrix.size(); l++)
-                    {
 
-                        // skip the same column;
-                        if (l == j)
-                            continue;
-                        minorRow.push_back(this->matrix[k][l]);
-                    }
-                    minorVector.push_back(minorRow);
+                    minorRow.push_back(matrix[k][l]);
                 }
-                Matrix minor(minorVector);
-                minorResult = minor.determinant();
+                minorVector.push_back(minorRow);
             }
 
-            result += cofactor * this->matrix[i][j - 1] * minorResult;
+            Matrix minor(minorVector);
+            double sign = std::pow(-1, col);
+            result += sign * minor.determinant() * this->matrix[0][col];
         }
 
         return result;
     }
-
     void printMatrix()
     {
 
@@ -100,8 +83,24 @@ public:
 
         for (int i = 0; i < this->rows; i++)
         {
-            // Divide the current row by the first element to get 1 there;
-            this->divide_row_by_number(i, this->matrix[i][0]);
+            for (int j = i; j < this->cols; j++)
+            {
+                // if the element is zero find the row below to swap with the current row
+                if (matrix[i][j] == 0)
+                {
+                    for (int k = i + 1; k < this->rows; k++)
+                    {
+                        if (matrix[k][j] != 0)
+                        {
+                            this->swap_rows(k, i);
+                        }
+                    }
+                }
+                // End of swapping with non zeros
+
+                // Now I need to divide the current row with the current row value
+                divide_row_by_number(i, matrix[i][j]);
+            }
         }
     }
 
@@ -119,7 +118,7 @@ public:
                 this->matrix[row_number][j] /= number;
         }
     }
-    void multiply_and_subtract_row_from_other_row_and_store_in_other_row(int row1, int row2, double number)
+    void other_row_plus_row_times_n(int row2, int row1, double number)
     {
 
         for (int j = 0; j < this->cols; j++)
@@ -138,13 +137,13 @@ int main()
 
     // 10 matrices in the same format as above:
     std::vector<std::vector<double>> matrix1 = {
-        {2, 3, 4},
-        {0, 1, 7},
+        {2, 0, 4},
+        {0, 8, 7},
         {8, 9, 10}};
 
     // Testing of swapping rows
     Matrix m(matrix1);
-    m.multiply_and_subtract_row_from_other_row_and_store_in_other_row(0, 2, 4);
+    m.reduced_echelon_form();
     m.printMatrix();
 
     // std::vector<std::vector<double>> matrix2 = {
