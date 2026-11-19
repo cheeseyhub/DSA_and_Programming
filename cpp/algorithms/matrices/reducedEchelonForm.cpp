@@ -78,12 +78,13 @@ public:
         }
     }
 
-    void reduced_echelon_form()
+    void echelon_form()
     {
 
         for (int i = 0; i < this->rows; i++)
         {
-            for (int j = 0; j < this->cols; j++)
+            int pivot_col = -1;
+            for (int j = pivot_col + 1; j < this->cols; j++)
             {
                 // if the element is zero find the row below to swap with the current row
                 if (matrix[i][j] == 0)
@@ -93,6 +94,7 @@ public:
                         if (matrix[k][j] != 0)
                         {
                             this->swap_rows(k, i);
+                            break;
                         }
                     }
                 }
@@ -102,6 +104,7 @@ public:
                 if (matrix[i][j] != 0)
                 {
                     this->divide_row_by_number(i, this->matrix[i][j]);
+                    pivot_col = j;
                     break;
                 }
             }
@@ -109,9 +112,9 @@ public:
             // Find the the values below in the current row and set that row equal to current row times the factor of the other row
             for (int k = i + 1; k < this->rows; k++)
             {
-                if (matrix[k][i] != 0)
+                if (pivot_col != -1 && matrix[k][pivot_col] != 0)
                 {
-                    this->other_row_plus_row_times_n(k, i, matrix[k][i]);
+                    this->other_row_plus_row_times_n(k, i, matrix[k][pivot_col]);
                 }
             }
         }
@@ -165,15 +168,15 @@ int main()
         {0, 0, 0}};
 
     Matrix m1(matrix1);
-    m1.reduced_echelon_form();
+    m1.echelon_form();
     m1.printMatrix();
 
     Matrix m2(matrix2);
-    m2.reduced_echelon_form();
+    m2.echelon_form();
     m2.printMatrix();
 
     Matrix m3(matrix3);
-    m3.reduced_echelon_form();
+    m3.echelon_form();
     m3.printMatrix();
 
     return 0;
