@@ -19,8 +19,8 @@ public:
             this->matrix.push_back(inputMatrix[i]);
         }
 
-        rows = inputMatrix[0].size();
-        cols = inputMatrix.size();
+        cols = inputMatrix[0].size();
+        rows = inputMatrix.size();
     };
 
     double determinant()
@@ -39,41 +39,25 @@ public:
 
         // Go through the first row
 
-        for (int i = 0; i < this->rows; i++)
+        for (int i = 0; i < this->cols; i++)
         {
-            // Get the cofactor adding one to get the acutally mathematical numbering ;
-
-            double cofactor = std::pow(-1, i);
-            double minorResult = 0;
-
-            int j;
-
-            for (j = 0; j < this->cols; j++)
+            std::vector<std::vector<double>> minorVector;
+            for (int k = 1; k < this->rows; k++)
             {
-                std::vector<std::vector<double>> minorVector;
-
-                // Inner loop for minor row and column;
-                for (int k = 0; k < this->matrix[i].size(); k++)
+                std::vector<double> minorRow;
+                for (int l = 0; l < this->cols; l++)
                 {
-                    // skip the same row ;
-                    if (k == i)
+                    if (l == i)
                         continue;
-                    std::vector<double> minorRow;
-                    for (int l = 0; l < this->matrix.size(); l++)
-                    {
 
-                        // skip the same column;
-                        if (l == j)
-                            continue;
-                        minorRow.push_back(this->matrix[k][l]);
-                    }
-                    minorVector.push_back(minorRow);
+                    minorRow.push_back(matrix[k][l]);
                 }
-                Matrix minor(minorVector);
-                minorResult = minor.determinant();
+                minorVector.push_back(minorRow);
             }
 
-            result += cofactor * this->matrix[i][j - 1] * minorResult;
+            Matrix minor(minorVector);
+            double sign = std::pow(-1, i);
+            result += sign * minor.determinant() * this->matrix[0][i];
         }
 
         return result;
@@ -108,56 +92,23 @@ public:
 int main()
 {
 
-    // 10 matrices in the same format as above:
     std::vector<std::vector<double>> matrix1 = {
-        {2, 3, 4},
-        {5, 6, 7},
-        {8, 9, 10}};
+        {1, 0, 0, 3},
+        {2, 7, 0, 6},
+        {0, 6, 3, 0},
+        {7, 3, 1, -5},
+    };
 
     std::vector<std::vector<double>> matrix2 = {
-        {-1, -2, -3},
-        {-4, -5, -6},
-        {-7, -8, -9}};
+        {0, 1, 5},
+        {3, -6, 9},
+        {2, 6, 1}};
 
     std::vector<std::vector<double>> matrix3 = {
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0}};
-
-    std::vector<std::vector<double>> matrix4 = {
-        {1, 2, 3},
-        {4, 5, 6},
-        {7, 8, 9}};
-
-    std::vector<std::vector<double>> matrix5 = {
-        {3, 5, 7},
-        {11, 13, 15},
-        {19, 21, 23}};
-
-    std::vector<std::vector<double>> matrix6 = {
-        {-2, -4, -6},
-        {-8, -10, -12},
-        {-14, -16, -18}};
-
-    std::vector<std::vector<double>> matrix7 = {
-        {1, 3, 5},
-        {7, 9, 11},
-        {13, 15, 17}};
-
-    std::vector<std::vector<double>> matrix8 = {
-        {-1, -3, -5},
-        {-7, -9, -11},
-        {-13, -15, -17}};
-
-    std::vector<std::vector<double>> matrix9 = {
-        {0, 0, 1},
-        {0, 1, 0},
-        {1, 0, 0}};
-
-    std::vector<std::vector<double>> matrix10 = {
-        {-1, -1, 1},
-        {1, -1, 0},
-        {-1, 1, 0}};
+        {1, 0, 0, -1},
+        {3, 1, 2, 2},
+        {1, 0, -2, 1},
+        {2, 0, 0, 1}};
 
     Matrix m1(matrix1);
     m1.printMatrix();
@@ -170,34 +121,6 @@ int main()
     Matrix m3(matrix3);
     m3.printMatrix();
     std::cout << "The determinant of the matrix is : " << m3.determinant() << std::endl;
-
-    Matrix m4(matrix4);
-    m4.printMatrix();
-    std::cout << "The determinant of the matrix is : " << m4.determinant() << std::endl;
-
-    Matrix m5(matrix5);
-    m5.printMatrix();
-    std::cout << "The determinant of the matrix is : " << m5.determinant() << std::endl;
-
-    Matrix m6(matrix6);
-    m6.printMatrix();
-    std::cout << "The determinant of the matrix is : " << m6.determinant() << std::endl;
-
-    Matrix m7(matrix7);
-    m7.printMatrix();
-    std::cout << "The determinant of the matrix is : " << m7.determinant() << std::endl;
-
-    Matrix m8(matrix8);
-    m8.printMatrix();
-    std::cout << "The determinant of the matrix is : " << m8.determinant() << std::endl;
-
-    Matrix m9(matrix9);
-    m9.printMatrix();
-    std::cout << "The determinant of the matrix is : " << m9.determinant() << std::endl;
-
-    Matrix m10(matrix10);
-    m10.printMatrix();
-    std::cout << "The determinant of the matrix is : " << m10.determinant() << std::endl;
 
     return 0;
 }
