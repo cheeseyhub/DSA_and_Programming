@@ -100,7 +100,7 @@ public:
                 }
                 // End of swapping with non zeros
 
-                // Find the first non-zero in the current row and divide by that number
+                // Find the first non-zero in the current row and divide by that number to get 1 in that row
                 if (matrix[i][j] != 0)
                 {
                     this->divide_row_by_number(i, this->matrix[i][j]);
@@ -113,6 +113,64 @@ public:
             for (int k = i + 1; k < this->rows; k++)
             {
                 if (pivot_col != -1 && matrix[k][pivot_col] != 0)
+                {
+                    this->other_row_plus_row_times_n(k, i, matrix[k][pivot_col]);
+                }
+            }
+        }
+    }
+    std::vector<std::vector<double>> createElementaryMatrix()
+    {
+        std::vector<std::vector<double>> elementaryMatrix(this->rows, std::vector<double>(this->cols));
+        // Intialzie the elementary matrix;
+
+        for (int i = 0; i < elementaryMatrix.size(); i++)
+        {
+            elementaryMatrix[i][i] = 1;
+        }
+
+        return elementaryMatrix;
+    }
+
+    void inverse()
+    {
+        // Elementary Matrix to store the inverse
+        std::vector<std::vector<double>> elementaryVector = createElementaryMatrix();
+        Matrix elementaryMatrix(elementaryVector);
+
+        for (int i = 0; i < this->rows; i++)
+        {
+            int pivot_col = -1;
+            for (int j = pivot_col + 1; j < this->cols; j++)
+            {
+                // if the element is zero find the row below to swap with the current row
+                if (matrix[i][j] == 0)
+                {
+                    for (int k = i + 1; k < this->rows; k++)
+                    {
+                        if (matrix[k][j] != 0)
+                        {
+                            this->swap_rows(k, i);
+                            break;
+                        }
+                    }
+                }
+                // End of swapping with non zeros
+
+                // Find the first non-zero in the current row and divide by that number to get 1 in that row
+                if (matrix[i][j] != 0)
+                {
+                    this->divide_row_by_number(i, this->matrix[i][j]);
+                    pivot_col = j;
+                    break;
+                }
+            }
+
+            // Find the the values below in the current row and set that row equal to current row times the factor of the other row
+            // Starting from zero to eliminate above and below
+            for (int k = 0; k < this->rows; k++)
+            {
+                if (k != pivot_col && pivot_col != -1 && matrix[k][pivot_col] != 0)
                 {
                     this->other_row_plus_row_times_n(k, i, matrix[k][pivot_col]);
                 }
@@ -158,26 +216,17 @@ int main()
         {2, 4, -5, 6, -5, -1}};
 
     std::vector<std::vector<double>> matrix2 = {
-        {-1, -2, -3},
-        {-4, -5, -6},
-        {-7, -8, -9}};
-
-    std::vector<std::vector<double>> matrix3 = {
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0}};
+        {1, 0, 2},
+        {2, -1, 3},
+        {4, 1, 8}};
 
     Matrix m1(matrix1);
     m1.echelon_form();
     m1.printMatrix();
 
     Matrix m2(matrix2);
-    m2.echelon_form();
+    m2.inverse();
     m2.printMatrix();
-
-    Matrix m3(matrix3);
-    m3.echelon_form();
-    m3.printMatrix();
 
     return 0;
 }
