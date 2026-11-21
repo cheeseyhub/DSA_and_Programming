@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <math.h>
+#include <cmath>
 
 class Matrix
 {
@@ -80,43 +81,45 @@ public:
 
     void echelon_form()
     {
-
-        for (int i = 0; i < this->rows; i++)
+        int pivot_row = 0;
+        for (int col = 0; col < this->cols && pivot_row < this->rows; col++)
         {
-            int pivot_col = -1;
-            for (int j = pivot_col + 1; j < this->cols; j++)
+            int max_row = pivot_row;
+            for (int k = pivot_row + 1; k < this->rows; k++)
             {
-                // if the element is zero find the row below to swap with the current row
-                if (matrix[i][j] == 0)
+                if (std::abs(matrix[k][col]) > 1e-10)
                 {
-                    for (int k = i + 1; k < this->rows; k++)
-                    {
-                        if (matrix[k][j] != 0)
-                        {
-                            this->swap_rows(k, i);
-                            break;
-                        }
-                    }
-                }
-                // End of swapping with non zeros
-
-                // Find the first non-zero in the current row and divide by that number to get 1 in that row
-                if (matrix[i][j] != 0)
-                {
-                    this->divide_row_by_number(i, this->matrix[i][j]);
-                    pivot_col = j;
-                    break;
+                    max_row = k;
                 }
             }
 
-            // Find the the values below in the current row and set that row equal to current row times the factor of the other row
-            for (int k = i + 1; k < this->rows; k++)
+            if (std::abs(matrix[max_row][col]) < 1e-9)
             {
-                if (pivot_col != -1 && matrix[k][pivot_col] != 0)
+                continue;
+            }
+
+            if (max_row != pivot_row)
+            {
+                this->swap_rows(max_row, pivot_row);
+            }
+
+            double pivot_val = matrix[pivot_row][col];
+
+            for (int j = col; j < this->cols; j++)
+            {
+                matrix[pivot_row][j] /= pivot_val;
+            }
+
+            for (int k = pivot_row + 1; k < this->rows; k++)
+            {
+                if (k != pivot_row && std::abs(matrix[k][col]) > 1e-9)
                 {
-                    this->other_row_plus_row_times_n(k, i, matrix[k][pivot_col]);
+                    double factor = matrix[k][col];
+                    this->other_row_plus_row_times_n(k, pivot_row, factor);
                 }
             }
+
+            pivot_row++;
         }
     }
     std::vector<std::vector<double>> createElementaryMatrix()
@@ -132,50 +135,61 @@ public:
         return elementaryMatrix;
     }
 
-    void inverse()
+    Matrix inverse()
     {
+        if (this->rows != this->cols)
+        {
+            std::cout << "Inverse doesn't exist because the matrix is not a square matrix " << std::endl;
+            return *this;
+        }
         // Elementary Matrix to store the inverse
         std::vector<std::vector<double>> elementaryVector = createElementaryMatrix();
         Matrix elementaryMatrix(elementaryVector);
 
         for (int i = 0; i < this->rows; i++)
         {
-            int pivot_col = -1;
-            for (int j = pivot_col + 1; j < this->cols; j++)
+            // if the element is zero find the row below to swap with the current row
+            if (std::abs(matrix[i][i]) < 1e-9)
             {
-                // if the element is zero find the row below to swap with the current row
-                if (matrix[i][j] == 0)
+                for (int k = i + 1; k < this->rows; k++)
                 {
-                    for (int k = i + 1; k < this->rows; k++)
+                    if (std::abs(this->matrix[k][i]) > 1e-9)
                     {
-                        if (matrix[k][j] != 0)
-                        {
-                            this->swap_rows(k, i);
-                            break;
-                        }
+                        // Apply on  elementaryMatrix;
+                        elementaryMatrix.swap_rows(k, i);
+                        this->swap_rows(k, i);
+                        break;
                     }
                 }
-                // End of swapping with non zeros
-
-                // Find the first non-zero in the current row and divide by that number to get 1 in that row
-                if (matrix[i][j] != 0)
-                {
-                    this->divide_row_by_number(i, this->matrix[i][j]);
-                    pivot_col = j;
-                    break;
-                }
             }
+            // End of swapping with non zeros
+
+            if (std::abs(this->matrix[i][i]) < 1e-9)
+            {
+                std::cout << "Inverse doesn't exit because matrix is sigular" << std::endl;
+                return *this;
+            }
+
+            // Find the first non-zero in the current row and divide by that number to get 1 in that row
+            // Apply on elementaryMatrix;
+            double dividing_factor = this->matrix[i][i];
+            elementaryMatrix.divide_row_by_number(i, dividing_factor);
+            this->divide_row_by_number(i, dividing_factor);
 
             // Find the the values below in the current row and set that row equal to current row times the factor of the other row
             // Starting from zero to eliminate above and below
             for (int k = 0; k < this->rows; k++)
             {
-                if (k != pivot_col && pivot_col != -1 && matrix[k][pivot_col] != 0)
+                if (k != i && matrix[k][i] != 0)
                 {
-                    this->other_row_plus_row_times_n(k, i, matrix[k][pivot_col]);
+                    double factor = this->matrix[k][i];
+                    // Apply on elementary matrix
+                    elementaryMatrix.other_row_plus_row_times_n(k, i, factor);
+                    this->other_row_plus_row_times_n(k, i, factor);
                 }
             }
         }
+        return elementaryMatrix;
     }
 
     void swap_rows(int i, int j)
@@ -216,17 +230,17 @@ int main()
         {2, 4, -5, 6, -5, -1}};
 
     std::vector<std::vector<double>> matrix2 = {
-        {1, 0, 2},
-        {2, -1, 3},
-        {4, 1, 8}};
+        {-24, 18, 5},
+        {20, -15, -4},
+        {-5, 4, 1}};
 
     Matrix m1(matrix1);
     m1.echelon_form();
     m1.printMatrix();
 
     Matrix m2(matrix2);
-    m2.inverse();
-    m2.printMatrix();
+    Matrix inverse_of_m2 = m2.inverse();
+    inverse_of_m2.printMatrix();
 
     return 0;
 }
